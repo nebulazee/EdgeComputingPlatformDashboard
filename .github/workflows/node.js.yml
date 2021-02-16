@@ -27,4 +27,4 @@ jobs:
         node-version: ${{ matrix.node-version }}
     - run: npm --prefix ./my-app-backend ci
     - run: npm --prefix ./my-app-backend run build --if-present
-    - run: npm test
+    - run: npm --prefix ./my-app-backend test
