@@ -1,6 +1,26 @@
 import React, { Component } from 'react'
 import { Navbar, Nav, NavDropdown, Form, FormControl, Button  } from 'react-bootstrap';
-export default class _Navbar extends Component {
+import { withRouter } from "react-router-dom";
+import PropTypes from "prop-types";
+import { connect } from "react-redux";
+import { logoutUser } from "../../redux/actions/authActions";
+
+class _Navbar extends Component {
+    constructor() {
+        super()
+        this.state = {
+            
+        }
+    }
+    componentWillReceiveProps(props) {
+        this.setState({
+            showLogout:props.auth.isAuthenticated
+        })
+    }
+    onChange = ()=>{
+        this.props.logoutUser(this.props.history)
+        this.props.history.push("/login");
+    }
     render() {
         return (
             <Navbar bg="light" >
@@ -9,7 +29,7 @@ export default class _Navbar extends Component {
                 <Navbar.Collapse id="basic-navbar-nav">
                     <Nav className="mr-auto">
                         <Nav.Link href="/">Home</Nav.Link>
-                        <Nav.Link href="/devices">Train Model</Nav.Link>
+                        <Nav.Link href="/projects">My Projects</Nav.Link>
                         <Nav.Link href="/cluster">Cluster</Nav.Link>
                         <NavDropdown title="Devices" id="basic-nav-dropdown">
                             <NavDropdown.Item href="/addDevice">Add a device</NavDropdown.Item>
@@ -19,12 +39,28 @@ export default class _Navbar extends Component {
                             <NavDropdown.Item href="#action/3.4">Separated link</NavDropdown.Item>
                         </NavDropdown>
                     </Nav>
+                    {this.props.auth.isAuthenticated && (
                     <Form inline>
-                        <FormControl type="text" placeholder="Search" className="mr-sm-2" />
-                        <Button variant="outline-success">Search</Button>
+                        {/* <FormControl type="text" placeholder="Search" className="mr-sm-2" /> */}
+                        <Button variant="outline-success" onClick={this.onChange}>Logout</Button>
                     </Form>
+                    )}
                 </Navbar.Collapse>
             </Navbar>
         )
     }
 }
+
+_Navbar.propTypes = {
+    logoutUser: PropTypes.func.isRequired,
+    auth: PropTypes.object.isRequired,
+    errors: PropTypes.object.isRequired
+  };
+  
+  const mapStateToProps = state => ({
+    auth: state.auth,
+    errors: state.errors,
+    success: state.success
+  });
+  
+  export default connect(mapStateToProps,{ logoutUser })(withRouter(_Navbar));
